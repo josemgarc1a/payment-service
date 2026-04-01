@@ -12,6 +12,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;
+
     @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal amount;
 
@@ -34,6 +37,8 @@ public class Payment {
     }
 
     public Long getId() { return id; }
+
+    public Long getVersion() { return version; }
 
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
