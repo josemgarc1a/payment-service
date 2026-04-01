@@ -4,6 +4,14 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/**
+ * Persistent entity representing a single payment record.
+ *
+ * <p>A payment begins in the {@link PaymentStatus#AUTHORIZED} state and advances
+ * through the state machine enforced by {@link com.example.paymentsservice.service.PaymentService}.
+ * The {@code createdAt} timestamp is set automatically on first persist and is
+ * never updated thereafter.
+ */
 @Entity
 @Table(name = "payments")
 public class Payment {
@@ -12,6 +20,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * JPA optimistic-locking token. Prevents lost updates when two concurrent
+     * requests attempt to transition the same payment to a new state at the
+     * same time; the second writer will receive an {@code OptimisticLockException}.
+     */
     @Version
     private Long version;
 
@@ -31,6 +44,7 @@ public class Payment {
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    /** Automatically assigns {@code createdAt} to the current UTC instant on first persist. */
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
